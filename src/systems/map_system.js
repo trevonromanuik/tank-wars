@@ -1,6 +1,4 @@
 import constants from '../constants';
-import tile_definitions from '../tile_definitions';
-import ResourceManager from '../resource_manager';
 
 export default class MapSystem {
 
