@@ -26,7 +26,9 @@ let constants = {
 		unit_selected: 'unit_selected',
 		menu_open: 'menu_open',
 		menu_selected: 'menu_selected',
-		select_target: 'select_target'
+		select_target: 'select_target',
+		show_threat: 'show_threat',
+		end_turn: 'end_turn'
 	}
 };
 

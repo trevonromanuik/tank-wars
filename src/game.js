@@ -37,8 +37,26 @@ export default class Game {
 
   preload() {
 
+    const player_ids = [];
+
+    player_ids.push(this.ecs.create_entity_with_components({
+      player: {
+        color: 'red'
+      }
+    }));
+
+    player_ids.push(this.ecs.create_entity_with_components({
+      player: {
+        color: 'blue'
+      }
+    }));
+
     this.ecs.create_entity_with_components({
-      game_state: { state: constants.GAME_STATES.idle }
+      game_state: {
+        player_ids: player_ids,
+        current_player_index: 0,
+        state: constants.GAME_STATES.idle 
+      }
     });
 
     this.ecs.create_entity_with_components({
@@ -59,7 +77,7 @@ export default class Game {
     });
 
     UnitSystem.create_unit(this.ecs, {
-      player: 1,
+      player: player_ids[0],
       type: 'infantry',
       color: 'red',
       health: 10,
@@ -70,7 +88,7 @@ export default class Game {
     });
 
     UnitSystem.create_unit(this.ecs, {
-      player: 2,
+      player: player_ids[1],
       type: 'infantry',
       color: 'blue',
       health: 10,
@@ -81,7 +99,7 @@ export default class Game {
     });
 
     UnitSystem.create_unit(this.ecs, {
-      player: 2,
+      player: player_ids[1],
       type: 'infantry',
       color: 'blue',
       health: 10,

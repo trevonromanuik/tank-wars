@@ -5,6 +5,8 @@ import CursorSystem from '../systems/cursor_system';
 import MapSystem from '../systems/map_system';
 import MenuSystem from '../systems/menu_system';
 import UnitSystem from '../systems/unit_system';
+import PlayerSystem from '../systems/player_system';
+import { SSL_OP_ALLOW_UNSAFE_LEGACY_RENEGOTIATION } from 'constants';
 
 export default class UnitSelectedState {
 
@@ -43,7 +45,6 @@ export default class UnitSelectedState {
       // move the unit around on the units map
       delete map.units[unit.tile_y][unit.tile_x];
       map.units[cursor.tile_y][cursor.tile_x] = unit_id;
-      ecs.add_component(map_id, 'map', map);
 
       // update the unit itself
       unit.prev_tile_x = unit.tile_x;
@@ -52,11 +53,13 @@ export default class UnitSelectedState {
       unit.tile_y = cursor.tile_y;
       unit.rotation = 0;
       delete unit.selected;
-      ecs.add_component(unit_id, 'unit', unit);
 
       // add the default menu items
       const menu_items = [{
-        state: constants.GAME_STATES.idle,
+        action: () => {
+          unit.moved = true;
+          game_state.state = constants.GAME_STATES.idle;
+        },
         text: 'Wait'
       }];
 
@@ -89,7 +92,9 @@ export default class UnitSelectedState {
         game_state.target_tiles = target_tiles;
         
         menu_items.unshift({
-          state: constants.GAME_STATES.select_target,
+          action: () => {
+            game_state.state = constants.GAME_STATES.select_target;
+          },
           text: 'Fire'
         });
 
@@ -102,7 +107,6 @@ export default class UnitSelectedState {
 
       // update the game_state
       game_state.state = constants.GAME_STATES.menu_open;
-      ecs.add_component(game_state_id, 'game_state', game_state);
 
     }
 
@@ -113,6 +117,7 @@ export default class UnitSelectedState {
     MapSystem.draw_movement_tiles(context, ecs);
     UnitSystem.draw_units(context, ecs);
     CursorSystem.draw_cursor(context, ecs);
+    PlayerSystem.draw_player(context, ecs);
   }
 
 }

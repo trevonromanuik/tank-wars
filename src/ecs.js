@@ -1,5 +1,3 @@
-import clone from 'fast-clone';
-
 export default class ECS {
 
   constructor() {
@@ -33,7 +31,7 @@ export default class ECS {
   get_component(id, name) {
     if(!this._entities.has(id)) return null;
     if(!this._components.has(name)) return null;
-    return clone(this._components.get(name).get(id));
+    return this._components.get(name).get(id);
   }
 
   add_component(id, name, data) {

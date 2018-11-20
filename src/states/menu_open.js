@@ -4,6 +4,7 @@ import utils from '../utils';
 import MapSystem from '../systems/map_system';
 import MenuSystem from '../systems/menu_system';
 import UnitSystem from '../systems/unit_system';
+import PlayerSystem from '../systems/player_system';
 
 export default class MenuOpenState {
 
@@ -28,20 +29,11 @@ export default class MenuOpenState {
           menu.selected_index += 1;
         }
       }
-    } 
-    
-    ecs.add_component(menu_id, 'menu', menu);
+    }
     
     if(utils.is_key_down(input_state.prev, input_state.cur, constants.KEYS.A)) {
-
-      const game_state_id = ecs.get_entity_with_component('game_state');
-      const game_state = ecs.get_component(game_state_id, 'game_state');
-
-      game_state.state = menu.items[menu.selected_index].state;
-      ecs.add_component(game_state_id, 'game_state', game_state);
-
+      menu.items[menu.selected_index].action();
       ecs.destroy_entity(menu_id);
-
     }
 
   }
@@ -50,6 +42,7 @@ export default class MenuOpenState {
     MapSystem.draw_map(context, ecs);
     UnitSystem.draw_units(context, ecs);
     MenuSystem.draw_menu(context, ecs);
+    PlayerSystem.draw_player(context, ecs);
   }
 
 }

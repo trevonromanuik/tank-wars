@@ -4,6 +4,7 @@ import utils from '../utils';
 import CursorSystem from '../systems/cursor_system';
 import MapSystem from '../systems/map_system';
 import UnitSystem from '../systems/unit_system';
+import PlayerSystem from '../systems/player_system';
 
 export default class SelectTargetState {
 
@@ -37,13 +38,15 @@ export default class SelectTargetState {
       const target_id = target_tile.unit_id;
       const target_unit = ecs.get_component(target_id, 'unit');
       target_unit.health -= 2; // TODO: damage
-      ecs.add_component(target_id, 'unit', target_unit);
+
+      if(target_unit.health <= 0) UnitSystem.destroy_unit(ecs, target_id);
+
+      const selected_unit = ecs.get_component(game_state.selected_unit, 'unit');
+      selected_unit.moved = true;
 
       game_state.state = constants.GAME_STATES.idle;
 
     }
-
-    ecs.add_component(game_state_id, 'game_state', game_state);
 
   }
 
@@ -52,6 +55,7 @@ export default class SelectTargetState {
     MapSystem.draw_target_tiles(context, ecs);
     UnitSystem.draw_units(context, ecs);
     CursorSystem.draw_target_cursor(context, ecs);
+    PlayerSystem.draw_player(context, ecs);
   }
 
 }

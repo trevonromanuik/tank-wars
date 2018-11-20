@@ -116,6 +116,13 @@ export default class MapSystem {
 
   static breadth_first_search(map, x, y, min_distance, max_distance, use_tile_costs) {
 
+    // TODO: clean up
+    if(use_tile_costs === true) {
+      use_tile_costs = () => { return true; };
+    } else if(use_tile_costs === false) {
+      use_tile_costs = () => { return false; };
+    }
+
     const min_x = 0, max_x = MapSystem.map_width(map) - 1;
     const min_y = 0, max_y = MapSystem.map_height(map) - 1;
 
@@ -145,7 +152,7 @@ export default class MapSystem {
         const tile = MapSystem.map_tile(map, x, y);
         let cost = node.cost;
         
-        if(use_tile_costs) {
+        if(use_tile_costs(cost)) {
           if(tile === 0) continue;
           if(tile === 3) continue;
           if(tile === 1) cost += 1;

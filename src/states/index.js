@@ -1,11 +1,15 @@
+import EndTurnState from './end_turn';
 import IdleState from './idle';
-import UnitSelectedState from './unit_selected';
 import MenuOpenState from './menu_open';
 import SelectTargetState from './select_target';
+import ShowThreatState from './show_threat';
+import UnitSelectedState from './unit_selected';
 
 export default {
+  end_turn: EndTurnState,
   idle: IdleState,
   menu_open: MenuOpenState,
   select_target: SelectTargetState,
+  show_threat: ShowThreatState,
   unit_selected: UnitSelectedState
 };

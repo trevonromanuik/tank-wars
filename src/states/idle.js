@@ -4,6 +4,8 @@ import utils from '../utils';
 import CursorSystem from '../systems/cursor_system';
 import MapSystem from '../systems/map_system';
 import UnitSystem from '../systems/unit_system';
+import MenuSystem from '../systems/menu_system';
+import PlayerSystem from '../systems/player_system';
 
 export default class IdleState {
 
@@ -14,24 +16,27 @@ export default class IdleState {
     const input_id = ecs.get_entity_with_component('input_state');
     const input_state = ecs.get_component(input_id, 'input_state');
 
+    const cursor_id = ecs.get_entity_with_component('cursor');
+    const cursor = ecs.get_component(cursor_id, 'cursor');
+
+    const map_id = ecs.get_entity_with_component('map');
+    const map = ecs.get_component(map_id, 'map');
+
+    const game_state_id = ecs.get_entity_with_component('game_state');
+    const game_state = ecs.get_component(game_state_id, 'game_state');
+
     if(utils.is_key_down(input_state.prev, input_state.cur, constants.KEYS.A)) {
 
-      const cursor_id = ecs.get_entity_with_component('cursor');
-      const cursor = ecs.get_component(cursor_id, 'cursor');
+      // check if there is a unit under the cursor
+      const unit_id = MapSystem.map_unit(map, cursor.tile_x, cursor.tile_y);
+      const unit = ecs.get_component(unit_id, 'unit');
 
-      const map_id = ecs.get_entity_with_component('map');
-      const map = ecs.get_component(map_id, 'map');
+      const current_player_id = game_state.player_ids[game_state.current_player_index];
 
-      // if there is a unit under the cursor
-      if(MapSystem.map_unit(map, cursor.tile_x, cursor.tile_y)) {
+      if(unit && unit.player === current_player_id && !unit.moved) {
         
-        // get the unit
-        const unit_id = MapSystem.map_unit(map, cursor.tile_x, cursor.tile_y);
-        const unit = ecs.get_component(unit_id, 'unit');
-
         // mark the unit as selected
         unit.selected = true;
-        ecs.add_component(unit_id, 'unit', unit);
 
         // calculate the tiles the unit can move to
         const nodes = MapSystem.breadth_first_search(
@@ -44,14 +49,48 @@ export default class IdleState {
         );
 
         // update the game state
-        const game_state_id = ecs.get_entity_with_component('game_state');
-        const game_state = ecs.get_component(game_state_id, 'game_state');
-
         game_state.selected_unit = unit_id;
         game_state.movement_tiles = nodes;
         game_state.state = constants.GAME_STATES.unit_selected;
 
-        ecs.add_component(game_state_id, 'game_state', game_state);
+      } else {
+
+        // show the game menu
+        MenuSystem.create_menu(ecs, {
+          items: [{
+            action: () => {
+              game_state.state = constants.GAME_STATES.end_turn;
+            },
+            text: 'End Turn'
+          }]
+        });
+
+        // update the game_state
+        game_state.state = constants.GAME_STATES.menu_open;
+
+      }
+
+    } else if(utils.is_key_down(input_state.prev, input_state.cur, constants.KEYS.B)) {
+
+      // check if there is a unit under the cursor
+      const unit_id = MapSystem.map_unit(map, cursor.tile_x, cursor.tile_y);
+      const unit = ecs.get_component(unit_id, 'unit');
+
+      if(unit) {
+
+        // calculate the tiles the unit can move to
+        const nodes = Object.values(MapSystem.breadth_first_search(
+          map,
+          cursor.tile_x,
+          cursor.tile_y,
+          0,
+          unit.speed + 1,
+          (cost) => { return cost <= unit.speed; }
+        ));
+        
+        // update the game state
+        game_state.target_tiles = nodes;
+        game_state.state = constants.GAME_STATES.show_threat;
 
       }
 
@@ -63,6 +102,7 @@ export default class IdleState {
     MapSystem.draw_map(context, ecs);
     UnitSystem.draw_units(context, ecs);
     CursorSystem.draw_cursor(context, ecs);
+    PlayerSystem.draw_player(context, ecs);
   }
 
 }
