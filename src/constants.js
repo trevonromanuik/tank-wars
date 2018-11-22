@@ -28,6 +28,7 @@ let constants = {
 		menu_selected: 'menu_selected',
 		select_target: 'select_target',
 		show_threat: 'show_threat',
+		start_turn: 'start_turn',
 		end_turn: 'end_turn'
 	}
 };

@@ -3,6 +3,7 @@ import IdleState from './idle';
 import MenuOpenState from './menu_open';
 import SelectTargetState from './select_target';
 import ShowThreatState from './show_threat';
+import StartTurnState from './start_turn';
 import UnitSelectedState from './unit_selected';
 
 export default {
@@ -11,5 +12,6 @@ export default {
   menu_open: MenuOpenState,
   select_target: SelectTargetState,
   show_threat: ShowThreatState,
+  start_turn: StartTurnState,
   unit_selected: UnitSelectedState
 };

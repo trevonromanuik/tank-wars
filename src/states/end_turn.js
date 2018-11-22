@@ -25,7 +25,7 @@ export default class EndTurnState {
     game_state.current_player_index = (game_state.current_player_index + 1) % game_state.player_ids.length;
 
     // go back to idle state
-    game_state.state = constants.GAME_STATES.idle;
+    game_state.state = constants.GAME_STATES.start_turn;
 
   }
 

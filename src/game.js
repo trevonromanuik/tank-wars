@@ -55,7 +55,7 @@ export default class Game {
       game_state: {
         player_ids: player_ids,
         current_player_index: 0,
-        state: constants.GAME_STATES.idle 
+        state: constants.GAME_STATES.start_turn 
       }
     });
 
