@@ -5,6 +5,7 @@ import CursorSystem from '../systems/cursor_system';
 import MapSystem from '../systems/map_system';
 import UnitSystem from '../systems/unit_system';
 import PlayerSystem from '../systems/player_system';
+import StateSystem from '../systems/state_system';
 
 export default class SelectTargetState {
 
@@ -19,6 +20,7 @@ export default class SelectTargetState {
     const left = utils.is_key_down(input_state.prev, input_state.cur, constants.KEYS.LEFT);
     const right = utils.is_key_down(input_state.prev, input_state.cur, constants.KEYS.RIGHT);
     const a = utils.is_key_down(input_state.prev, input_state.cur, constants.KEYS.A);
+    const b = utils.is_key_down(input_state.prev, input_state.cur, constants.KEYS.B);
 
     if(left ^ right) {
       if(left) {
@@ -41,10 +43,11 @@ export default class SelectTargetState {
 
       if(target_unit.health <= 0) UnitSystem.destroy_unit(ecs, target_id);
 
-      const selected_unit = ecs.get_component(game_state.selected_unit, 'unit');
-      selected_unit.moved = true;
+      game_state.state = constants.GAME_STATES.unit_moved;
 
-      game_state.state = constants.GAME_STATES.idle;
+    } else if(b) {
+
+      StateSystem.pop_state(ecs);
 
     }
 

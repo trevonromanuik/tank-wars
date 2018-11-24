@@ -6,6 +6,7 @@ import MapSystem from '../systems/map_system';
 import UnitSystem from '../systems/unit_system';
 import MenuSystem from '../systems/menu_system';
 import PlayerSystem from '../systems/player_system';
+import StateSystem from '../systems/state_system';
 
 export default class IdleState {
 
@@ -35,6 +36,9 @@ export default class IdleState {
 
       if(unit && unit.player === current_player_id && !unit.moved) {
         
+        // push the state onto the stack
+        StateSystem.push_state(ecs);
+
         // mark the unit as selected
         unit.selected = true;
 
@@ -55,12 +59,13 @@ export default class IdleState {
 
       } else {
 
+        // push the state onto the stack
+        StateSystem.push_state(ecs);
+
         // show the game menu
         MenuSystem.create_menu(ecs, {
           items: [{
-            action: () => {
-              game_state.state = constants.GAME_STATES.end_turn;
-            },
+            state: constants.GAME_STATES.end_turn,
             text: 'End Turn'
           }]
         });

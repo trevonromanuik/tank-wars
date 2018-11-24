@@ -6,7 +6,7 @@ import MapSystem from '../systems/map_system';
 import MenuSystem from '../systems/menu_system';
 import UnitSystem from '../systems/unit_system';
 import PlayerSystem from '../systems/player_system';
-import { SSL_OP_ALLOW_UNSAFE_LEGACY_RENEGOTIATION } from 'constants';
+import StateSystem from '../systems/state_system';
 
 export default class UnitSelectedState {
 
@@ -42,6 +42,9 @@ export default class UnitSelectedState {
       const cursor_unit_id = MapSystem.map_unit(map, cursor.tile_x, cursor.tile_y);
       if(cursor_unit_id && cursor_unit_id !== unit_id) return;
 
+      // push the state
+      StateSystem.push_state(ecs);
+
       // move the unit around on the units map
       delete map.units[unit.tile_y][unit.tile_x];
       map.units[cursor.tile_y][cursor.tile_x] = unit_id;
@@ -56,10 +59,7 @@ export default class UnitSelectedState {
 
       // add the default menu items
       const menu_items = [{
-        action: () => {
-          unit.moved = true;
-          game_state.state = constants.GAME_STATES.idle;
-        },
+        state: constants.GAME_STATES.unit_moved,
         text: 'Wait'
       }];
 
@@ -92,9 +92,7 @@ export default class UnitSelectedState {
         game_state.target_tiles = target_tiles;
         
         menu_items.unshift({
-          action: () => {
-            game_state.state = constants.GAME_STATES.select_target;
-          },
+          state: constants.GAME_STATES.select_target,
           text: 'Fire'
         });
 
@@ -107,6 +105,11 @@ export default class UnitSelectedState {
 
       // update the game_state
       game_state.state = constants.GAME_STATES.menu_open;
+
+    } else if(utils.is_key_down(input_state.prev, input_state.cur, constants.KEYS.B)) {
+
+      // pop the state
+      StateSystem.pop_state(ecs);
 
     }
 

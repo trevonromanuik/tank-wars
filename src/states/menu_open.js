@@ -5,6 +5,7 @@ import MapSystem from '../systems/map_system';
 import MenuSystem from '../systems/menu_system';
 import UnitSystem from '../systems/unit_system';
 import PlayerSystem from '../systems/player_system';
+import StateSystem from '../systems/state_system';
 
 export default class MenuOpenState {
 
@@ -32,8 +33,19 @@ export default class MenuOpenState {
     }
     
     if(utils.is_key_down(input_state.prev, input_state.cur, constants.KEYS.A)) {
-      menu.items[menu.selected_index].action();
+
+      StateSystem.push_state(ecs);
+
+      const game_state_id = ecs.get_entity_with_component('game_state');
+      const game_state = ecs.get_component(game_state_id, 'game_state');
+
+      game_state.state = menu.items[menu.selected_index].state;
       ecs.destroy_entity(menu_id);
+
+    } else if(utils.is_key_down(input_state.prev, input_state.cur, constants.KEYS.B)) {
+
+      StateSystem.pop_state(ecs);
+
     }
 
   }

@@ -1,3 +1,5 @@
+import clone from 'fast-clone';
+
 export default class ECS {
 
   constructor() {
@@ -56,6 +58,19 @@ export default class ECS {
   get_entities_with_component(name) {
     if(!this._components[name]) return null;
     return Object.keys(this._components[name]);
+  }
+
+  serialize() {
+    return JSON.stringify({
+      entities: this._entities,
+      components: this._components
+    });
+  }
+
+  deserialize(data) {
+    data = JSON.parse(data);
+    this._entities = data.entities;
+    this._components = data.components;
   }
 
 }

@@ -22,14 +22,15 @@ let constants = {
 		mountains: 3
 	},
 	GAME_STATES: {
+		end_turn: 'end_turn',
 		idle: 'idle',
-		unit_selected: 'unit_selected',
 		menu_open: 'menu_open',
 		menu_selected: 'menu_selected',
 		select_target: 'select_target',
 		show_threat: 'show_threat',
 		start_turn: 'start_turn',
-		end_turn: 'end_turn'
+		unit_selected: 'unit_selected',
+		unit_moved: 'unit_moved'
 	}
 };
 
