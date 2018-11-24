@@ -43,14 +43,7 @@ export default class IdleState {
         unit.selected = true;
 
         // calculate the tiles the unit can move to
-        const nodes = MapSystem.breadth_first_search(
-          map, 
-          cursor.tile_x,
-          cursor.tile_y,
-          0,
-          unit.speed,
-          true
-        );
+        const nodes = MapSystem.calculate_movement_tiles(ecs, map, unit);
 
         // update the game state
         game_state.selected_unit = unit_id;
@@ -84,14 +77,7 @@ export default class IdleState {
       if(unit) {
 
         // calculate the tiles the unit can move to
-        const nodes = Object.values(MapSystem.breadth_first_search(
-          map,
-          cursor.tile_x,
-          cursor.tile_y,
-          0,
-          unit.speed + 1,
-          (cost) => { return cost <= unit.speed; }
-        ));
+        const nodes = Object.values(MapSystem.calculate_threat_tiles(ecs, map, unit));
         
         // update the game state
         game_state.target_tiles = nodes;

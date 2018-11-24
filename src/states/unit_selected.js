@@ -54,7 +54,6 @@ export default class UnitSelectedState {
       unit.prev_tile_y = unit.tile_y;
       unit.tile_x = cursor.tile_x;
       unit.tile_y = cursor.tile_y;
-      unit.rotation = 0;
       delete unit.selected;
 
       // add the default menu items
@@ -64,14 +63,7 @@ export default class UnitSelectedState {
       }];
 
       // check if there are any enemies in range
-      const nodes = Object.values(MapSystem.breadth_first_search(
-        map,
-        cursor.tile_x,
-        cursor.tile_y,
-        1,
-        1,
-        false
-      ));
+      const nodes = Object.values(MapSystem.calculate_target_tiles(ecs, map, unit));
 
       const target_tiles = [];
       for(let i = 0; i < nodes.length; i++) {

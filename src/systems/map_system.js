@@ -1,5 +1,12 @@
 import constants from '../constants';
 
+const TILE_COSTS = {
+  0: Infinity,
+  1: 1,
+  2: 2,
+  3: Infinity
+};
+
 export default class MapSystem {
 
   static create_map(ecs, data) {
@@ -114,14 +121,51 @@ export default class MapSystem {
 
   }
 
-  static breadth_first_search(map, x, y, min_distance, max_distance, use_tile_costs) {
+  static calculate_movement_tiles(ecs, map, unit) {
 
-    // TODO: clean up
-    if(use_tile_costs === true) {
-      use_tile_costs = () => { return true; };
-    } else if(use_tile_costs === false) {
-      use_tile_costs = () => { return false; };
-    }
+    const game_state_id = ecs.get_entity_with_component('game_state');
+    const game_state = ecs.get_component(game_state_id, 'game_state');
+
+    const current_player_id = game_state.player_ids[game_state.current_player_index];
+
+    return MapSystem.breadth_first_search(map, unit.tile_x, unit.tile_y, 0, unit.speed, (tile, x, y, current_cost) => {
+      const unit_id = MapSystem.map_unit(map, x, y);
+      if(unit_id && ecs.get_component(unit_id, 'unit').player !== current_player_id) {
+        return Infinity;
+      } else {
+        return TILE_COSTS[tile];
+      }
+    });
+  }
+
+  static calculate_threat_tiles(ecs, map, unit) {
+
+    const game_state_id = ecs.get_entity_with_component('game_state');
+    const game_state = ecs.get_component(game_state_id, 'game_state');
+
+    const current_player_id = game_state.player_ids[game_state.current_player_index];
+
+    const max_distance = unit.speed + 1;
+    return MapSystem.breadth_first_search(map, unit.tile_x, unit.tile_y, 0, unit.speed + 1, (tile, x, y, current_cost) => {
+      const cost = TILE_COSTS[tile];
+      const unit_id = MapSystem.map_unit(map, x, y);
+      if((current_cost + cost) > unit.speed) {
+        return (max_distance - current_cost) || Infinity;
+      } else if(unit_id && ecs.get_component(unit_id, 'unit').player !== current_player_id) {
+        return (max_distance - current_cost);
+      } else {
+        return cost;
+      }
+    });
+  }
+
+  static calculate_target_tiles(ecs, map, unit) {
+    return MapSystem.breadth_first_search(map, unit.tile_x, unit.tile_y, 1, 1, (tile, x, y, current_cost) => {
+      return 1;
+    });
+  }
+
+  static breadth_first_search(map, x, y, min_distance, max_distance, tile_cost_fn) {
 
     const min_x = 0, max_x = MapSystem.map_width(map) - 1;
     const min_y = 0, max_y = MapSystem.map_height(map) - 1;
@@ -152,14 +196,9 @@ export default class MapSystem {
         const tile = MapSystem.map_tile(map, x, y);
         let cost = node.cost;
         
-        if(use_tile_costs(cost)) {
-          if(tile === 0) continue;
-          if(tile === 3) continue;
-          if(tile === 1) cost += 1;
-          if(tile === 2) cost += 2;
-        } else {
-          cost += 1;
-        }
+        let c = tile_cost_fn(tile, x, y, cost);
+        // console.log(x, y, cost, c, max_distance);
+        cost += c;
 
         if(cost > max_distance) continue;
 
