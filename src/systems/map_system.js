@@ -229,15 +229,13 @@ export default class MapSystem {
     const game_state_id = ecs.get_entity_with_component('game_state');
     const game_state = ecs.get_component(game_state_id, 'game_state');
 
-    const current_player_id = game_state.player_ids[game_state.current_player_index];
-
     const max_distance = unit.speed + 1;
     return MapSystem.breadth_first_search(map, unit.tile_x, unit.tile_y, 0, unit.speed + 1, (tile, x, y, current_cost) => {
       const cost = MapSystem.get_tile_cost(tile);
       const unit_id = MapSystem.map_unit(map, x, y);
       if((current_cost + cost) > unit.speed) {
         return (max_distance - current_cost) || Infinity;
-      } else if(unit_id && ecs.get_component(unit_id, 'unit').player !== current_player_id) {
+      } else if(unit_id && ecs.get_component(unit_id, 'unit').player !== unit.player) {
         return (max_distance - current_cost);
       } else {
         return cost;
