@@ -7,13 +7,17 @@ export default class UnitSystem {
     const map_id = ecs.get_entity_with_component('map');
     const map = ecs.get_component(map_id, 'map');
 
+    const player = ecs.get_component(data.player, 'player');
+
     const units = map.units;
     if(units[data.tile_y][data.tile_x]) {
       throw new Error(`Already a Unit at ${data.tile_x},${data.tile_y}`);
     }
 
     const unit_id = ecs.create_entity_with_components({
-      unit: data
+      unit: Object.assign(data, {
+        color: player.color
+      })
     });
 
     units[data.tile_y][data.tile_x] = unit_id;
@@ -34,25 +38,43 @@ export default class UnitSystem {
 
   static draw_units(context, ecs) {
 
-    const players_map = {};
-
-    const player_ids = ecs.get_entities_with_component('player');
-    player_ids.forEach((player_id) => {
-      players_map[player_id] = ecs.get_component(player_id, 'player');
-    });
-
     const unit_ids = ecs.get_entities_with_component('unit');
     for(let i = 0; i < unit_ids.length; i++) {
       
       const unit = ecs.get_component(unit_ids[i], 'unit');
-      
-      context.save();
-      
-      context.translate(
+      const [x, y] = [
         unit.tile_x * constants.TILE_WIDTH + (constants.TILE_WIDTH / 2),
         unit.tile_y * constants.TILE_HEIGHT + (constants.TILE_HEIGHT / 2)
-      );
-      context.fillStyle = players_map[unit.player].color;
+      ];
+      
+      UnitSystem._draw_unit(context, unit, x, y);
+
+    }
+
+  }
+
+  static _draw_unit(context, unit, x, y) {
+
+    context.save();
+      
+    context.translate(
+      unit.tile_x * constants.TILE_WIDTH + (constants.TILE_WIDTH / 2),
+      unit.tile_y * constants.TILE_HEIGHT + (constants.TILE_HEIGHT / 2)
+    );
+    context.fillStyle = unit.color;
+    context.fillRect(
+      -24,
+      -24,
+      constants.TILE_WIDTH - 16,
+      constants.TILE_HEIGHT - 16
+    );
+
+    if(unit.moved) {
+
+      context.save();
+
+      context.fillStyle = 'black';
+      context.globalAlpha = 0.5;
       context.fillRect(
         -24,
         -24,
@@ -60,40 +82,25 @@ export default class UnitSystem {
         constants.TILE_HEIGHT - 16
       );
 
-      if(unit.moved) {
+      context.restore();
 
-        context.save();
+    }
 
-        context.fillStyle = 'black';
-        context.globalAlpha = 0.5;
-        context.fillRect(
-          -24,
-          -24,
-          constants.TILE_WIDTH - 16,
-          constants.TILE_HEIGHT - 16
-        );
+    if(unit.health < 10) {
 
-        context.restore();
+      context.save();
 
-      }
-
-      if(unit.health < 10) {
-
-        context.save();
-
-        context.fillStyle = 'white';
-        context.font = '32px serif';
-        context.textAlign = 'center';
-        context.textBaseline = 'middle';
-        context.fillText(unit.health, 0, 0);
-
-        context.restore();
-
-      }
+      context.fillStyle = 'white';
+      context.font = '32px serif';
+      context.textAlign = 'center';
+      context.textBaseline = 'middle';
+      context.fillText(unit.health, 0, 0);
 
       context.restore();
 
     }
+
+    context.restore();
 
   }
 

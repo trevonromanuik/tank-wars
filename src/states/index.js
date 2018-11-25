@@ -6,6 +6,7 @@ import ShowThreatState from './show_threat';
 import StartTurnState from './start_turn';
 import UnitSelectedState from './unit_selected';
 import UnitMovedState from './unit_moved';
+import UnitMovingState from './unit_moving';
 
 export default {
   end_turn: EndTurnState,
@@ -15,5 +16,6 @@ export default {
   show_threat: ShowThreatState,
   start_turn: StartTurnState,
   unit_selected: UnitSelectedState,
-  unit_moved: UnitMovedState
+  unit_moved: UnitMovedState,
+  unit_moving: UnitMovingState
 };

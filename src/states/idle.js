@@ -32,9 +32,7 @@ export default class IdleState {
       const unit_id = MapSystem.map_unit(map, cursor.tile_x, cursor.tile_y);
       const unit = ecs.get_component(unit_id, 'unit');
 
-      const current_player_id = game_state.player_ids[game_state.current_player_index];
-
-      if(unit && unit.player === current_player_id && !unit.moved) {
+      if(unit && !unit.moved) {
         
         // push the state onto the stack
         StateSystem.push_state(ecs);
@@ -48,6 +46,7 @@ export default class IdleState {
         // update the game state
         game_state.selected_unit = unit_id;
         game_state.movement_tiles = nodes;
+        game_state.movement_path = [{ x: cursor.tile_x, y: cursor.tile_y, cost: 0 }];
         game_state.state = constants.GAME_STATES.unit_selected;
 
       } else {

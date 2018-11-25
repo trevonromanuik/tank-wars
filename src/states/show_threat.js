@@ -11,6 +11,8 @@ export default class ShowThreatState {
 
   static update(ts, ecs) {
 
+    CursorSystem.handle_arrow_keys(ecs);
+
     const input_id = ecs.get_entity_with_component('input_state');
     const input_state = ecs.get_component(input_id, 'input_state');
 

@@ -1,5 +1,12 @@
 import constants from '../constants';
 
+const DIRECTIONS = {
+  UP: 1,
+  RIGHT: 2,
+  DOWN: 4,
+  LEFT: 8
+};
+
 const TILE_COSTS = {
   0: Infinity,
   1: 1,
@@ -96,6 +103,87 @@ export default class MapSystem {
 
   }
 
+  static draw_movement_path(context, ecs) {
+
+    const game_state_id = ecs.get_entity_with_component('game_state');
+    const game_state = ecs.get_component(game_state_id, 'game_state');
+    const movement_path = game_state.movement_path;
+
+    if(movement_path.length === 1) return;
+
+    context.save();
+
+    context.fillStyle = 'white';
+
+    for(let i = 0; i < movement_path.length; i++) {
+      
+      const cur_step = movement_path[i];
+      let d = 0;
+
+      if(i > 0) {
+        const prev_step = movement_path[i - 1];
+        d += MapSystem._get_direction(cur_step, prev_step);
+      }
+
+      if(i < movement_path.length - 1) {
+        const next_step = movement_path[i + 1];
+        d += MapSystem._get_direction(cur_step, next_step);
+      }
+
+      if(d & DIRECTIONS.UP) {
+        context.fillRect(
+          (cur_step.x * constants.TILE_WIDTH) + (constants.TILE_WIDTH / 4),
+          (cur_step.y * constants.TILE_HEIGHT),
+          (constants.TILE_WIDTH / 2),
+          (3 * constants.TILE_HEIGHT / 4)
+        );
+      }
+
+      if(d & DIRECTIONS.RIGHT) {
+        context.fillRect(
+          (cur_step.x * constants.TILE_WIDTH) + (constants.TILE_WIDTH / 4),
+          (cur_step.y * constants.TILE_HEIGHT) + (constants.TILE_HEIGHT / 4),
+          (3 * constants.TILE_WIDTH / 4),
+          (constants.TILE_HEIGHT / 2)
+        );
+      }
+
+      if(d & DIRECTIONS.DOWN) {
+        context.fillRect(
+          (cur_step.x * constants.TILE_WIDTH) + (constants.TILE_WIDTH / 4),
+          (cur_step.y * constants.TILE_HEIGHT) + (constants.TILE_HEIGHT / 4),
+          (constants.TILE_WIDTH / 2),
+          (3 * constants.TILE_HEIGHT / 4)
+        );
+      }
+
+      if(d & DIRECTIONS.LEFT) {
+        context.fillRect(
+          (cur_step.x * constants.TILE_WIDTH),
+          (cur_step.y * constants.TILE_HEIGHT) + (constants.TILE_HEIGHT / 4),
+          (3 * constants.TILE_WIDTH / 4),
+          (constants.TILE_HEIGHT / 2)
+        );
+      }
+
+    }
+
+    context.restore();
+
+  }
+
+  static _get_direction(source, target) {
+    
+    const dx = target.x - source.x;
+    if(dx > 0) return DIRECTIONS.RIGHT;
+    else if(dx < 0) return DIRECTIONS.LEFT;
+
+    const dy = target.y - source.y;
+    if(dy > 0) return DIRECTIONS.DOWN;
+    else if(dy < 0) return DIRECTIONS.UP;
+
+  }
+
   static draw_target_tiles(context, ecs) {
 
     const game_state_id = ecs.get_entity_with_component('game_state');
@@ -121,19 +209,17 @@ export default class MapSystem {
 
   }
 
+  static get_tile_cost(tile) {
+    return TILE_COSTS[tile];
+  }
+
   static calculate_movement_tiles(ecs, map, unit) {
-
-    const game_state_id = ecs.get_entity_with_component('game_state');
-    const game_state = ecs.get_component(game_state_id, 'game_state');
-
-    const current_player_id = game_state.player_ids[game_state.current_player_index];
-
     return MapSystem.breadth_first_search(map, unit.tile_x, unit.tile_y, 0, unit.speed, (tile, x, y, current_cost) => {
       const unit_id = MapSystem.map_unit(map, x, y);
-      if(unit_id && ecs.get_component(unit_id, 'unit').player !== current_player_id) {
+      if(unit_id && ecs.get_component(unit_id, 'unit').player !== unit.player) {
         return Infinity;
       } else {
-        return TILE_COSTS[tile];
+        return MapSystem.get_tile_cost(tile);
       }
     });
   }
@@ -147,7 +233,7 @@ export default class MapSystem {
 
     const max_distance = unit.speed + 1;
     return MapSystem.breadth_first_search(map, unit.tile_x, unit.tile_y, 0, unit.speed + 1, (tile, x, y, current_cost) => {
-      const cost = TILE_COSTS[tile];
+      const cost = MapSystem.get_tile_cost(tile);
       const unit_id = MapSystem.map_unit(map, x, y);
       if((current_cost + cost) > unit.speed) {
         return (max_distance - current_cost) || Infinity;
@@ -171,7 +257,7 @@ export default class MapSystem {
     const min_y = 0, max_y = MapSystem.map_height(map) - 1;
 
     const visited = {};
-    const unvisited = [{ x, y, cost: 0 }];
+    const unvisited = [{ x, y, cost: 0, path: [{ x, y, cost: 0 }] }];
 
     while(unvisited.length) {
       
@@ -196,13 +282,16 @@ export default class MapSystem {
         const tile = MapSystem.map_tile(map, x, y);
         let cost = node.cost;
         
-        let c = tile_cost_fn(tile, x, y, cost);
-        // console.log(x, y, cost, c, max_distance);
-        cost += c;
+        cost += tile_cost_fn(tile, x, y, cost);
 
         if(cost > max_distance) continue;
 
-        unvisited.push({ x, y, cost });
+        unvisited.push({ 
+          x, 
+          y, 
+          cost,
+          path: [].concat(node.path || [], [{ x, y, cost }])
+        });
 
       }
 

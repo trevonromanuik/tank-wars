@@ -30,7 +30,8 @@ let constants = {
 		show_threat: 'show_threat',
 		start_turn: 'start_turn',
 		unit_selected: 'unit_selected',
-		unit_moved: 'unit_moved'
+		unit_moved: 'unit_moved',
+		unit_moving: 'unit_moving'
 	}
 };
 
