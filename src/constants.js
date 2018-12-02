@@ -1,8 +1,10 @@
-let constants = {
-	SCREEN_WIDTH: 768,
-	SCREEN_HEIGHT: 512,
-	TILE_WIDTH: 64,
-	TILE_HEIGHT: 64,
+const constants = {
+	SCREEN_TILE_WIDTH: 15,
+	SCREEN_TILE_HEIGHT: 10,
+	TILE_WIDTH: 32,
+	TILE_HEIGHT: 32,
+	SPRITE_WIDTH: 64,
+	SPRITE_HEIGHT: 64,
 	KEYS: {
 		START: 13,
 		SELECT: 16,
@@ -19,7 +21,11 @@ let constants = {
 		water: 0,
 		grass: 1,
 		forest: 2,
-		mountains: 3
+		mountains: 3,
+		road: 4,
+		river: 5,
+		city: 6,
+		hq: 7
 	},
 	GAME_STATES: {
 		end_turn: 'end_turn',
@@ -34,5 +40,10 @@ let constants = {
 		unit_moving: 'unit_moving'
 	}
 };
+
+Object.assign(constants, {
+	SCREEN_WIDTH: constants.SCREEN_TILE_WIDTH * constants.TILE_WIDTH,
+	SCREEN_HEIGHT: constants.SCREEN_TILE_HEIGHT * constants.TILE_HEIGHT
+});
 
 export default constants;

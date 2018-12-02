@@ -8,10 +8,66 @@ const DIRECTIONS = {
 };
 
 const TILE_COSTS = {
-  0: Infinity,
-  1: 1,
-  2: 2,
-  3: Infinity
+  infantry: {
+    0: Infinity,
+    1: 1,
+    2: 2,
+    3: 2,
+    4: 1,
+    5: 2,
+    6: 1,
+    7: 1
+  },
+  mech: {
+    0: Infinity,
+    1: 1,
+    2: 1,
+    3: 1,
+    4: 1,
+    5: 1,
+    6: 1,
+    7: 1
+  },
+  tire: {
+    0: Infinity,
+    1: 2,
+    2: 3,
+    3: Infinity,
+    4: 1,
+    5: Infinity,
+    6: 1,
+    7: 1
+  },
+  tread: {
+    0: Infinity,
+    1: 1,
+    2: 2,
+    3: Infinity,
+    4: 1,
+    5: Infinity,
+    6: 1,
+    7: 1
+  },
+  air: {
+    0: 1,
+    1: 1,
+    2: 1,
+    3: 1,
+    4: 1,
+    5: 1,
+    6: 1,
+    7: 1
+  },
+  sea: {
+    0: 1,
+    1: Infinity,
+    2: Infinity,
+    3: Infinity,
+    4: Infinity,
+    5: Infinity,
+    6: Infinity,
+    7: Infinity
+  }
 };
 
 export default class MapSystem {
@@ -51,6 +107,18 @@ export default class MapSystem {
             break;
           case constants.TILE_TYPES.mountains:
             context.fillStyle = 'brown';
+            break;
+          case constants.TILE_TYPES.road:
+            context.fillStyle = 'lightgrey';
+            break;
+          case constants.TILE_TYPES.river:
+            context.fillStyle = 'lightblue';
+            break;
+          case constants.TILE_TYPES.city:
+            context.fillStyle = 'grey';
+            break;
+          case constants.TILE_TYPES.hq:
+            context.fillStyle = 'grey';
             break;
         }
         context.fillRect(
@@ -209,17 +277,17 @@ export default class MapSystem {
 
   }
 
-  static get_tile_cost(tile) {
-    return TILE_COSTS[tile];
+  static get_tile_cost(move_type, tile) {
+    return TILE_COSTS[move_type][tile];
   }
 
   static calculate_movement_tiles(ecs, map, unit) {
-    return MapSystem.breadth_first_search(map, unit.tile_x, unit.tile_y, 0, unit.speed, (tile, x, y, current_cost) => {
+    return MapSystem.breadth_first_search(map, unit.tile_x, unit.tile_y, 0, unit.move, (tile, x, y, current_cost) => {
       const unit_id = MapSystem.map_unit(map, x, y);
-      if(unit_id && ecs.get_component(unit_id, 'unit').player !== unit.player) {
+      if(unit_id && ecs.get_component(unit_id, 'unit').player_id !== unit.player_id) {
         return Infinity;
       } else {
-        return MapSystem.get_tile_cost(tile);
+        return MapSystem.get_tile_cost(unit.move_type, tile);
       }
     });
   }
@@ -229,24 +297,49 @@ export default class MapSystem {
     const game_state_id = ecs.get_entity_with_component('game_state');
     const game_state = ecs.get_component(game_state_id, 'game_state');
 
-    const max_distance = unit.speed + 1;
-    return MapSystem.breadth_first_search(map, unit.tile_x, unit.tile_y, 0, unit.speed + 1, (tile, x, y, current_cost) => {
-      const cost = MapSystem.get_tile_cost(tile);
-      const unit_id = MapSystem.map_unit(map, x, y);
-      if((current_cost + cost) > unit.speed) {
-        return (max_distance - current_cost) || Infinity;
-      } else if(unit_id && ecs.get_component(unit_id, 'unit').player !== unit.player) {
-        return (max_distance - current_cost);
+    const ranged_attack = unit.attacks.find((attack) => {
+      return attack.range.min > 1;
+    });
+
+    const melee_attack = unit.attacks.find((attack) => {
+      return attack.range.min === 1;
+    });
+
+    if(!(ranged_attack || melee_attack)) return {};
+
+    const min_distance = (ranged_attack && ranged_attack.range.min) ||
+      (melee_attack && melee_attack.range.min) || 0;
+    const max_distance = (ranged_attack && ranged_attack.range.max) ||
+      (melee_attack && (unit.move + melee_attack.range.max)) || 0;
+
+    return MapSystem.breadth_first_search(map, unit.tile_x, unit.tile_y, min_distance, max_distance, (tile, x, y, current_cost) => {
+      if(ranged_attack) {
+        return 1;
       } else {
-        return cost;
+        const cost = MapSystem.get_tile_cost(unit.move_type, tile);
+        const unit_id = MapSystem.map_unit(map, x, y);
+        if((current_cost + cost) > unit.move) {
+          return (max_distance - current_cost) || Infinity;
+        } else if(unit_id && ecs.get_component(unit_id, 'unit').player_id !== unit.player_id) {
+          return (max_distance - current_cost);
+        } else {
+          return cost;
+        }
       }
     });
   }
 
   static calculate_target_tiles(ecs, map, unit) {
-    return MapSystem.breadth_first_search(map, unit.tile_x, unit.tile_y, 1, 1, (tile, x, y, current_cost) => {
+    
+    const attack = unit.attacks[0];
+
+    const min_distance = attack ? attack.range.min : 0;
+    const max_distance = attack ? attack.range.max : 0;
+
+    return MapSystem.breadth_first_search(map, unit.tile_x, unit.tile_y, min_distance, max_distance, (tile, x, y, current_cost) => {
       return 1;
     });
+
   }
 
   static breadth_first_search(map, x, y, min_distance, max_distance, tile_cost_fn) {

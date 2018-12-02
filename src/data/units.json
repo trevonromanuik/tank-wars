@@ -1,0 +1,679 @@
+{
+  "infantry": {
+    "name": "Infantry",
+    "unit_type": "infantry",
+    "move_type": "infantry",
+    "move": 3,
+    "vision": 2,
+    "gas": {
+      "max": 99
+    },
+    "attacks": [{
+      "name": "M Gun",
+      "range": {
+        "min": 1,
+        "max": 1
+      },
+      "ammo" :{
+        "max": 0
+      },
+      "targets": [{
+        "type": "infantry",
+        "strength": "strong"
+      }, {
+        "type": "vehicle",
+        "strength": "normal"
+      }, {
+        "type": "helicopter",
+        "strength": "normal"
+      }]
+    }],
+    "sprites": {
+      "idle": {
+        "x": 0,
+        "y": 0
+      }
+    }
+  },
+  "mech": {
+    "name": "Mech",
+    "unit_type": "infantry",
+    "move_type": "mech",
+    "move": 2,
+    "vision": 2,
+    "gas": {
+      "max": 99
+    },
+    "attacks": [{
+      "name": "Bazooka",
+      "range": {
+        "min": 1,
+        "max": 1
+      },
+      "ammo" :{
+        "max": 3
+      },
+      "targets": [{
+        "type": "vehicle",
+        "strength": "strong"
+      }]
+    }, {
+      "name": "M Gun",
+      "range": {
+        "min": 1,
+        "max": 1
+      },
+      "ammo" :{
+        "max": 0
+      },
+      "targets": [{
+        "type": "infantry",
+        "strength": "strong"
+      }, {
+        "type": "vehicle",
+        "strength": "normal"
+      }, {
+        "type": "helicopter",
+        "strength": "normal"
+      }]
+    }],
+    "sprites": {
+      "idle": {   
+        "x": 1,
+        "y": 0
+      }
+    }
+  },
+  "recon": {
+    "name": "Recon",
+    "unit_type": "vehicle",
+    "move_type": "tire",
+    "move": 8,
+    "vision": 5,
+    "gas": {
+      "max": 80
+    },
+    "attacks": [{
+      "name": "M Gun",
+      "range": {
+        "min": 1,
+        "max": 1
+      },
+      "ammo" :{
+        "max": 0
+      },
+      "targets": [{
+        "type": "infantry",
+        "strength": "strong"
+      }, {
+        "type": "vehicle",
+        "strength": "normal"
+      }, {
+        "type": "helicopter",
+        "strength": "normal"
+      }]
+    }],
+    "sprites": {
+      "idle": {   
+        "x": 2,
+        "y": 0
+      }
+    }
+  },
+  "artillery": {
+    "name": "Artillery",
+    "unit_type": "vehicle",
+    "move_type": "tread",
+    "move": 5,
+    "vision": 1,
+    "gas": {
+      "max": 50
+    },
+    "attacks": [{
+      "name": "Cannon",
+      "range": {
+        "min": 2,
+        "max": 3
+      },
+      "ammo" :{
+        "max": 9
+      },
+      "targets": [{
+        "type": "infantry",
+        "strength": "strong"
+      }, {
+        "type": "vehicle",
+        "strength": "strong"
+      }, {
+        "type": "ship",
+        "strength": "normal"
+      }, {
+        "type": "sub",
+        "strength": "normal"
+      }]
+    }],
+    "sprites": {
+      "idle": {   
+        "x": 6,
+        "y": 0
+      }
+    }
+  },
+  "tank": {
+    "name": "Tank",
+    "unit_type": "vehicle",
+    "move_type": "tread",
+    "move": 6,
+    "vision": 3,
+    "gas": {
+      "max": 70
+    },
+    "attacks": [{
+      "name": "Cannon",
+      "range": {
+        "min": 1,
+        "max": 1
+      },
+      "ammo" :{
+        "max": 9
+      },
+      "targets": [{
+        "type": "vehicle",
+        "strength": "strong"
+      }, {
+        "type": "ship",
+        "strength": "normal"
+      }, {
+        "type": "sub",
+        "strength": "normal"
+      }]
+    }, {
+      "name": "M Gun",
+      "range": {
+        "min": 1,
+        "max": 1
+      },
+      "ammo" :{
+        "max": 0
+      },
+      "targets": [{
+        "type": "infantry",
+        "strength": "strong"
+      }, {
+        "type": "vehicle",
+        "strength": "normal"
+      }, {
+        "type": "helicopter",
+        "strength": "normal"
+      }]
+    }],
+    "sprites": {
+      "idle": {   
+        "x": 4,
+        "y": 0
+      }
+    }
+  },
+  "md tank": {
+    "name": "Md Tank",
+    "unit_type": "vehicle",
+    "move_type": "tread",
+    "move": 5,
+    "vision": 1,
+    "gas": {
+      "max": 50
+    },
+    "attacks": [{
+      "name": "Cannon",
+      "range": {
+        "min": 1,
+        "max": 1
+      },
+      "ammo" :{
+        "max": 8
+      },
+      "targets": [{
+        "type": "vehicle",
+        "strength": "strong"
+      }, {
+        "type": "ship",
+        "strength": "normal"
+      }, {
+        "type": "sub",
+        "strength": "normal"
+      }]
+    }, {
+      "name": "M Gun",
+      "range": {
+        "min": 1,
+        "max": 1
+      },
+      "ammo" :{
+        "max": 0
+      },
+      "targets": [{
+        "type": "infantry",
+        "strength": "strong"
+      }, {
+        "type": "vehicle",
+        "strength": "normal"
+      }, {
+        "type": "helicopter",
+        "strength": "normal"
+      }]
+    }],
+    "sprites": {
+      "idle": {   
+        "x": 5,
+        "y": 0
+      }
+    }
+  },
+  "apc": {
+    "name": "APC",
+    "unit_type": "vehicle",
+    "move_type": "tread",
+    "move": 6,
+    "vision": 1,
+    "gas": {
+      "max": 70
+    },
+    "attacks": [],
+    "sprites": {
+      "idle": {   
+        "x": 3,
+        "y": 0
+      }
+    }
+  },
+  "rockets": {
+    "name": "Rockets",
+    "unit_type": "vehicle",
+    "move_type": "tire",
+    "move": 5,
+    "vision": 1,
+    "gas": {
+      "max": 50
+    },
+    "attacks": [{
+      "name": "Rockets",
+      "range": {
+        "min": 3,
+        "max": 5
+      },
+      "ammo" :{
+        "max": 6
+      },
+      "targets": [{
+        "type": "infantry",
+        "strength": "strong"
+      }, {
+        "type": "vehicle",
+        "strength": "strong"
+      }, {
+        "type": "ship",
+        "strength": "strong"
+      }, {
+        "type": "sub",
+        "strength": "strong"
+      }]
+    }],
+    "sprites": {
+      "idle": {   
+        "x": 7,
+        "y": 0
+      }
+    }
+  },
+  "anti-air": {
+    "name": "Anti-Air",
+    "unit_type": "vehicle",
+    "move_type": "tread",
+    "move": 6,
+    "vision": 2,
+    "gas": {
+      "max": 60
+    },
+    "attacks": [{
+      "name": "Vulcan",
+      "range": {
+        "min": 1,
+        "max": 1
+      },
+      "ammo" :{
+        "max": 9
+      },
+      "targets": [{
+        "type": "infantry",
+        "strength": "strong"
+      }, {
+        "type": "vehicle",
+        "strength": "normal"
+      }, {
+        "type": "helicopter",
+        "strength": "strong"
+      }, {
+        "type": "plane",
+        "strength": "strong"
+      }]
+    }],
+    "sprites": {
+      "idle": {   
+        "x": 8,
+        "y": 0
+      }
+    }
+  },
+  "missiles": {
+    "name": "Missiles",
+    "unit_type": "vehicle",
+    "move_type": "tire",
+    "move": 4,
+    "vision": 5,
+    "gas": {
+      "max": 50
+    },
+    "attacks": [{
+      "name": "Missiles",
+      "range": {
+        "min": 3,
+        "max": 5
+      },
+      "ammo" :{
+        "max": 6
+      },
+      "targets": [{
+        "type": "helicopter",
+        "strength": "strong"
+      }, {
+        "type": "plane",
+        "strength": "strong"
+      }]
+    }],
+    "sprites": {
+      "idle": {   
+        "x": 9,
+        "y": 0
+      }
+    }
+  },
+  "fighter": {
+    "name": "Fighter",
+    "unit_type": "plane",
+    "move_type": "air",
+    "move": 9,
+    "vision": 2,
+    "gas": {
+      "max": 99
+    },
+    "attacks": [{
+      "name": "Missiles",
+      "range": {
+        "min": 1,
+        "max": 1
+      },
+      "ammo" :{
+        "max": 9
+      },
+      "targets": [{
+        "type": "helicopter",
+        "strength": "strong"
+      }, {
+        "type": "plane",
+        "strength": "strong"
+      }]
+    }],
+    "sprites": {
+      "idle": {   
+        "x": 12,
+        "y": 0
+      }
+    }
+  },
+  "bomber": {
+    "name": "Bomber",
+    "unit_type": "plane",
+    "move_type": "air",
+    "move": 7,
+    "vision": 2,
+    "gas": {
+      "max": 99
+    },
+    "attacks": [{
+      "name": "Bombs",
+      "range": {
+        "min": 1,
+        "max": 1
+      },
+      "ammo" :{
+        "max": 9
+      },
+      "targets": [{
+        "type": "infantry",
+        "strength": "strong"
+      }, {
+        "type": "vehicle",
+        "strength": "strong"
+      }, {
+        "type": "ship",
+        "strength": "strong"
+      }, {
+        "type": "sub",
+        "strength": "strong"
+      }]
+    }],
+    "sprites": {
+      "idle": {   
+        "x": 13,
+        "y": 0
+      }
+    }
+  },
+  "battle copter": {
+    "name": "Battle Copter",
+    "unit_type": "helicopter",
+    "move_type": "air",
+    "move": 6,
+    "vision": 3,
+    "gas": {
+      "max": 99
+    },
+    "attacks": [{
+      "name": "Missiles",
+      "range": {
+        "min": 1,
+        "max": 1
+      },
+      "ammo" :{
+        "max": 6
+      },
+      "targets": [{
+        "type": "vehicle",
+        "strength": "strong"
+      }, {
+        "type": "ship",
+        "strength": "strong"
+      }, {
+        "type": "sub",
+        "strength": "strong"
+      }]
+    }, {
+      "name": "M Gun",
+      "range": {
+        "min": 1,
+        "max": 1
+      },
+      "ammo" :{
+        "max": 0
+      },
+      "targets": [{
+        "type": "infantry",
+        "strength": "strong"
+      }, {
+        "type": "vehicle",
+        "strength": "normal"
+      }, {
+        "type": "helicopter",
+        "strength": "strong"
+      }]
+    }],
+    "sprites": {
+      "idle": {   
+        "x": 11,
+        "y": 0
+      }
+    }
+  },
+  "transport copter": {
+    "name": "Transport Copter",
+    "unit_type": "helicopter",
+    "move_type": "air",
+    "move": 6,
+    "vision": 2,
+    "gas": {
+      "max": 99
+    },
+    "attacks": [],
+    "sprites": {
+      "idle": {   
+        "x": 10,
+        "y": 0
+      }
+    }
+  },
+  "battleship": {
+    "name": "Battleship",
+    "unit_type": "ship",
+    "move_type": "sea",
+    "move": 5,
+    "vision": 2,
+    "gas": {
+      "max": 99
+    },
+    "attacks": [{
+      "name": "Cannon",
+      "range": {
+        "min": 2,
+        "max": 5
+      },
+      "ammo" :{
+        "max": 9
+      },
+      "targets": [{
+        "type": "infantry",
+        "strength": "strong"
+      }, {
+        "type": "vehicle",
+        "strength": "strong"
+      }, {
+        "type": "ship",
+        "strength": "strong"
+      }, {
+        "type": "sub",
+        "strength": "strong"
+      }]
+    }],
+    "sprites": {
+      "idle": {   
+        "x": 17,
+        "y": 0
+      }
+    }
+  },
+  "cruiser": {
+    "name": "Cruiser",
+    "unit_type": "ship",
+    "move_type": "sea",
+    "move": 6,
+    "vision": 3,
+    "gas": {
+      "max": 99
+    },
+    "attacks": [{
+      "name": "Missiles",
+      "range": {
+        "min": 1,
+        "max": 1
+      },
+      "ammo" :{
+        "max": 9
+      },
+      "targets": [{
+        "type": "sub",
+        "strength": "strong"
+      }]
+    }, {
+      "name": "Anti-Air Gun",
+      "range": {
+        "min": 1,
+        "max": 1
+      },
+      "ammo" :{
+        "max": 0
+      },
+      "targets": [{
+        "type": "helicopter",
+        "strength": "strong"
+      }, {
+        "type": "plane",
+        "strength": "strong"
+      }]
+    }],
+    "sprites": {
+      "idle": {   
+        "x": 15,
+        "y": 0
+      }
+    }
+  },
+  "lander": {
+    "name": "Lander",
+    "unit_type": "ship",
+    "move_type": "sea",
+    "move": 6,
+    "vision": 1,
+    "gas": {
+      "max": 99
+    },
+    "attacks": [],
+    "sprites": {
+      "idle": {   
+        "x": 14,
+        "y": 0
+      }
+    }
+  },
+  "sub": {
+    "name": "Sub",
+    "unit_type": "sub",
+    "move_type": "sea",
+    "move": 5,
+    "vision": 5,
+    "gas": {
+      "max": 60
+    },
+    "attacks": [{
+      "name": "Torpedoes",
+      "range": {
+        "min": 1,
+        "max": 1
+      },
+      "ammo" :{
+        "max": 6
+      },
+      "targets": [{
+        "type": "ship",
+        "strength": "strong"
+      }, {
+        "type": "sub",
+        "strength": "strong"
+      }]
+    }],
+    "sprites": {
+      "idle": {   
+        "x": 16,
+        "y": 0
+      }
+    }
+  }
+}

@@ -15,10 +15,10 @@ export default class PlayerSystem {
 
     context.fillStyle = current_player.color;
     context.fillRect(
-      640,
+      (constants.SCREEN_TILE_WIDTH - 2) * constants.TILE_WIDTH,
       0,
-      128,
-      32
+      2 * constants.TILE_WIDTH,
+      constants.TILE_HEIGHT / 2
     );
 
     context.restore();

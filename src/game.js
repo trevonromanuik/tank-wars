@@ -8,6 +8,8 @@ import UnitSystem from './systems/unit_system';
 import CursorSystem from './systems/cursor_system';
 import MenuSystem from './systems/menu_system';
 
+import ResourceManager from './resource_manager';
+
 import states from './states';
 
 export default class Game {
@@ -65,48 +67,111 @@ export default class Game {
 
     MapSystem.create_map(this.ecs, {
       tiles: [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 1, 0, 1, 1, 1, 1, 1, 2, 2, 1, 0],
-        [0, 1, 0, 0, 0, 1, 1, 1, 1, 2, 1, 0],
-        [0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0],
-        [0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0],
-        [0, 1, 0, 1, 1, 1, 1, 1, 3, 1, 1, 0],
-        [0, 1, 0, 1, 1, 1, 1, 1, 1, 3, 1, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        [2, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 2],
+        [1, 1, 4, 4, 4, 4, 6, 6, 6, 4, 4, 4, 4, 1, 1],
+        [3, 3, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 3, 3],
+        [5, 5, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 4, 5, 5],
+        [1, 1, 4, 1, 1, 1, 3, 3, 3, 1, 1, 1, 4, 1, 1],
+        [7, 4, 4, 4, 4, 4, 4, 3, 4, 4, 4, 4, 4, 4, 7],
+        [1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 6, 6, 3, 3, 3, 6, 6, 1, 1, 1, 1],
+        [1, 1, 1, 1, 2, 3, 3, 3, 3, 3, 2, 1, 1, 1, 1],
+        [1, 6, 6, 2, 2, 2, 2, 2, 2, 2, 2, 2, 6, 6, 1]
       ]
     });
 
-    UnitSystem.create_unit(this.ecs, {
-      player: player_ids[0],
+    const red_units = [{
+      type: 'tank',
+      tile_x: 2,
+      tile_y: 4
+    }, {
+      type: 'apc',
+      tile_x: 1,
+      tile_y: 5
+    }, {
       type: 'infantry',
-      color: 'red',
-      health: 10,
-      tile_x: 5,
-      tile_y: 5,
-      speed: 4,
-      rotation: 0
+      tile_x: 1,
+      tile_y: 6
+    }, {
+      type: 'infantry',
+      tile_x: 2,
+      tile_y: 6
+    }, {
+      type: 'mech',
+      tile_x: 3,
+      tile_y: 6
+    }, {
+      type: 'artillery',
+      tile_x: 4,
+      tile_y: 6
+    }, {
+      type: 'mech',
+      tile_x: 1,
+      tile_y: 7
+    }, {
+      type: 'recon',
+      tile_x: 4,
+      tile_y: 7
+    }];
+
+    red_units.forEach(({
+      type,
+      tile_x,
+      tile_y
+    }) => {
+      UnitSystem.create_unit(this.ecs, {
+        player_id: player_ids[0],
+        type: type,
+        tile_x: tile_x,
+        tile_y: tile_y
+      });
     });
 
-    UnitSystem.create_unit(this.ecs, {
-      player: player_ids[1],
+    const blue_units = [{
+      type: 'tank',
+      tile_x: 12,
+      tile_y: 4
+    }, {
+      type: 'apc',
+      tile_x: 13,
+      tile_y: 5
+    }, {
       type: 'infantry',
-      color: 'blue',
-      health: 10,
-      tile_x: 7,
-      tile_y: 5,
-      speed: 4,
-      rotation: 0
-    });
+      tile_x: 13,
+      tile_y: 6
+    }, {
+      type: 'infantry',
+      tile_x: 12,
+      tile_y: 6
+    }, {
+      type: 'mech',
+      tile_x: 11,
+      tile_y: 6
+    }, {
+      type: 'artillery',
+      tile_x: 10,
+      tile_y: 6
+    }, {
+      type: 'mech',
+      tile_x: 13,
+      tile_y: 7
+    }, {
+      type: 'recon',
+      tile_x: 10,
+      tile_y: 7
+    }];
 
-    UnitSystem.create_unit(this.ecs, {
-      player: player_ids[1],
-      type: 'infantry',
-      color: 'blue',
-      health: 10,
-      tile_x: 6,
-      tile_y: 6,
-      speed: 4,
-      rotation: 0
+    blue_units.forEach(({
+      type,
+      tile_x,
+      tile_y
+    }) => {
+      UnitSystem.create_unit(this.ecs, {
+        player_id: player_ids[1],
+        type: type,
+        tile_x: tile_x,
+        tile_y: tile_y
+      });
     });
 
     this.ecs.create_entity_with_components({
@@ -116,7 +181,15 @@ export default class Game {
       }
     });
 
-    this.run();
+    Promise.all([
+      ResourceManager.loadImage('units_blue', './assets/img/units_blue.png'),
+      ResourceManager.loadImage('units_green', './assets/img/units_green.png'),
+      ResourceManager.loadImage('units_red', './assets/img/units_red.png'),
+      ResourceManager.loadImage('units_yellow', './assets/img/units_yellow.png'),
+    ]).then(() => {
+      this.run();
+    });
+
   }
 
   run() {

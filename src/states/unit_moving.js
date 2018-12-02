@@ -7,7 +7,7 @@ import UnitSystem from '../systems/unit_system';
 import PlayerSystem from '../systems/player_system';
 
 // how long it takes for a unit to move one tile
-const UNIT_MOVE_SPEED = 150;
+const UNIT_MOVE_TIME = 150;
 
 export default class UnitMovingState {
 
@@ -24,16 +24,16 @@ export default class UnitMovingState {
     if(!game_state.unit_moving_time) game_state.unit_moving_time = 0;
     game_state.unit_moving_time += ts;
 
-    const i = Math.floor(game_state.unit_moving_time / UNIT_MOVE_SPEED);
+    const i = Math.floor(game_state.unit_moving_time / UNIT_MOVE_TIME);
     if(i < game_state.movement_path.length - 1) {
 
       let cur_step = game_state.movement_path[i];
       let next_step = game_state.movement_path[i + 1];
 
-      let dt = game_state.unit_moving_time % UNIT_MOVE_SPEED;
+      let dt = game_state.unit_moving_time % UNIT_MOVE_TIME;
 
-      unit.tile_x = cur_step.x + (next_step.x - cur_step.x) * (dt / UNIT_MOVE_SPEED);
-      unit.tile_y = cur_step.y + (next_step.y - cur_step.y) * (dt / UNIT_MOVE_SPEED);
+      unit.tile_x = cur_step.x + (next_step.x - cur_step.x) * (dt / UNIT_MOVE_TIME);
+      unit.tile_y = cur_step.y + (next_step.y - cur_step.y) * (dt / UNIT_MOVE_TIME);
 
     } else {
 
@@ -61,32 +61,40 @@ export default class UnitMovingState {
         text: 'Wait'
       }];
 
-      // check if there are any enemies in range
-      const nodes = Object.values(MapSystem.calculate_target_tiles(ecs, map, unit));
+      const melee_attack = unit.attacks.find((attack) => {
+        return attack.range.min === 0;
+      });
 
-      const target_tiles = [];
-      for(let i = 0; i < nodes.length; i++) {
-        
-        const other_unit_id = MapSystem.map_unit(map, nodes[i].x, nodes[i].y);
-        if(!other_unit_id) continue;
+      if(first_step === last_step || melee_attack) {
 
-        const other_unit = ecs.get_component(other_unit_id, 'unit');
-        if(other_unit.player !== unit.player) {
-          target_tiles.push({ x: nodes[i].x, y: nodes[i].y, unit_id: other_unit_id });
+        // check if there are any enemies in range
+        const nodes = Object.values(MapSystem.calculate_target_tiles(ecs, map, unit));
+
+        const target_tiles = [];
+        for(let i = 0; i < nodes.length; i++) {
+          
+          const other_unit_id = MapSystem.map_unit(map, nodes[i].x, nodes[i].y);
+          if(!other_unit_id) continue;
+
+          const other_unit = ecs.get_component(other_unit_id, 'unit');
+          if(other_unit.player_id !== unit.player_id) {
+            target_tiles.push({ x: nodes[i].x, y: nodes[i].y, unit_id: other_unit_id });
+          }
+
         }
 
-      }
+        if(target_tiles.length) {
+          
+          game_state.selected_target = 0;
+          game_state.target_tiles = target_tiles;
+          
+          menu_items.unshift({
+            state: constants.GAME_STATES.select_target,
+            text: 'Fire'
+          });
 
-      if(target_tiles.length) {
+        }
         
-        game_state.selected_target = 0;
-        game_state.target_tiles = target_tiles;
-        
-        menu_items.unshift({
-          state: constants.GAME_STATES.select_target,
-          text: 'Fire'
-        });
-
       }
 
       // show a menu

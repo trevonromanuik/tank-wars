@@ -40,7 +40,7 @@ export default class UnitSelectedState {
     if(utils.is_key_down(input_state.prev, input_state.cur, constants.KEYS.A)) {
 
       const current_player_id = game_state.player_ids[game_state.current_player_index];
-      if(unit.player !== current_player_id) return;
+      if(unit.player_id !== current_player_id) return;
 
       // check if we can move the selected unit to this tile
       if(!movement_tiles[`${cursor.tile_x},${cursor.tile_y}`]) return;
@@ -89,9 +89,9 @@ export default class UnitSelectedState {
         if(!found) {
 
           const tile = MapSystem.map_tile(map, x, y);
-          const cost = last_step.cost + MapSystem.get_tile_cost(tile);
+          const cost = last_step.cost + MapSystem.get_tile_cost(unit.move_type, tile);
 
-          if(cost > unit.speed) {
+          if(cost > unit.move) {
 
             // they moved to far - just reset path
             game_state.movement_path = clone(movement_tiles[`${x},${y}`].path);
