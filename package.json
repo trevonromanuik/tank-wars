@@ -9,7 +9,8 @@
   "license": "ISC",
   "dependencies": {
     "fast-clone": "1.5.3",
-    "lodash": "4.17.11"
+    "lodash": "4.17.11",
+    "query-string": "6.2.0"
   },
   "devDependencies": {
     "del": "3.0.0",

@@ -62,7 +62,7 @@ export default class UnitMovingState {
       }];
 
       const melee_attack = unit.attacks.find((attack) => {
-        return attack.range.min === 0;
+        return attack.range.min === 1;
       });
 
       if(first_step === last_step || melee_attack) {

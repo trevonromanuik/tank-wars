@@ -146,14 +146,16 @@ export default class UnitSystem {
 
       context.save();
 
-      context.fillStyle = 'white';
-      context.font = '32px "Courier New"';
-      context.textAlign = 'center';
-      context.textBaseline = 'middle';
-      context.fillText(
-        unit.health, 
-        constants.TILE_WIDTH / 2,
-        constants.TILE_HEIGHT / 2
+      context.drawImage(
+        ResourceManager.getImage('damage_numbers'),
+        constants.SPRITE_WIDTH * unit.health,
+        0,
+        constants.SPRITE_WIDTH,
+        constants.SPRITE_HEIGHT,
+        0,
+        0,
+        constants.TILE_WIDTH,
+        constants.TILE_HEIGHT
       );
 
       context.restore();

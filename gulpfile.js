@@ -1,6 +1,6 @@
-let gulp = require('gulp');
-let del = require('del');
-let webpack = require('webpack-stream');
+const gulp = require('gulp');
+const del = require('del');
+const webpack = require('webpack-stream');
 
 gulp.task('clean', () => {
     return del(['dist']);
