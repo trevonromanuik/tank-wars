@@ -17,12 +17,39 @@ export default class Game {
 
   constructor(canvas, settings) {
 
-    this.context = canvas.getContext('2d');
-
     canvas.width = constants.SCREEN_WIDTH;
     canvas.height = constants.SCREEN_HEIGHT;
 
-    canvas.imageSmoothingEnabled = false;
+    this.context = canvas.getContext('2d');
+    this.context.imageSmoothingEnabled = false;
+
+    this.context.defaults = {
+      fillStyle: '#000000',
+      filter: 'none',
+      font: '10px sans-serif',
+      globalAlpha: 1,
+      globalCompositeOperation: 'source-over',
+      imageSmoothingEnabled: false,
+      imageSmoothingQuality: 'low',
+      lineCap: 'butt',
+      lineDashOffset: 0,
+      lineJoin: 'miter',
+      lineWidth: 1,
+      miterLimit: 10,
+      shadowBlur: 0,
+      shadowColor: 'rbga(0, 0, 0, 0)',
+      shadowOffsetX: 0,
+      shadowOffsetY: 0,
+      strokeStyle: '#000000',
+      textAlign: 'start',
+      textBaseline: 'alphabetic'
+    };
+
+    this.context.reset = (props) => {
+      props.forEach((prop) => {
+        this.context[prop] = this.context.defaults[prop];
+      });
+    };
 
     this.settings = Object.assign({
       map: 'river'

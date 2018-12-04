@@ -69,28 +69,21 @@ export default class UnitSystem {
 
   static _draw_unit(context, unit) {
 
-    context.save();
-
-    // TODO: better
-    if(unit.color === 'red' || unit.color === 'green') {
-      context.translate(
-        (unit.tile_x + 1) * constants.TILE_WIDTH,
-        unit.tile_y * constants.TILE_HEIGHT
-      );
-      context.scale(-1, 1);
-    } else {
-      context.translate(
-        unit.tile_x * constants.TILE_WIDTH,
-        unit.tile_y * constants.TILE_HEIGHT
-      );
-    }
-
-    context.save();
+    // create a buffer canvas
+    const buffer = document.createElement('canvas');
+    buffer.width = constants.TILE_WIDTH;
+    buffer.height = constants.TILE_HEIGHT;
+    const bx = buffer.getContext('2d');
 
     const image = ResourceManager.getImage(`units_${unit.color}`);
     const sprite = unit.sprites.idle;
 
-    context.drawImage(
+    if(unit.color === 'red' || unit.color === 'green') {
+      bx.translate(constants.TILE_WIDTH, 0);
+      bx.scale(-1, 1);
+    }
+
+    bx.drawImage(
       image,
       sprite.x * constants.SPRITE_WIDTH,
       sprite.y * constants.SPRITE_HEIGHT,
@@ -101,50 +94,23 @@ export default class UnitSystem {
       constants.TILE_WIDTH,
       constants.TILE_HEIGHT
     );
-      
+
     if(unit.moved) {
-
-      // create a buffer canvas
-      const buffer = document.createElement('canvas');
-      buffer.width = constants.TILE_WIDTH;
-      buffer.height = constants.TILE_HEIGHT;
-      const bx = buffer.getContext('2d');
-
-      // fill the buffer with the tint color
+      bx.globalCompositeOperation = 'source-atop';
       bx.fillStyle = 'black';
-      bx.fillRect(0, 0, buffer.width, buffer.height);
-
-      // destination-atop will create a cutout of the sprite
-      bx.globalCompositeOperation = 'destination-atop';
-      bx.drawImage(
-        image,
-        sprite.x * constants.SPRITE_WIDTH,
-        sprite.y * constants.SPRITE_HEIGHT,
-        constants.SPRITE_WIDTH,
-        constants.SPRITE_HEIGHT,
-        0,
-        0,
-        constants.TILE_WIDTH,
-        constants.TILE_HEIGHT
-      );
-
-      // draw the buffer over the existing image
-      context.globalAlpha = 0.5;
-      context.drawImage(
-        buffer,
-        0,
-        0,
-        constants.TILE_WIDTH,
-        constants.TILE_HEIGHT
-      );
-
+      bx.globalAlpha = 0.5;
+      bx.fillRect(0, 0, constants.TILE_WIDTH, constants.TILE_HEIGHT);
     }
 
-    context.restore();
+    context.drawImage(
+      buffer,
+      unit.tile_x * constants.TILE_WIDTH,
+      unit.tile_y * constants.TILE_HEIGHT,
+      constants.TILE_WIDTH,
+      constants.TILE_HEIGHT
+    );
     
     if(unit.health < 10) {
-
-      context.save();
 
       context.drawImage(
         ResourceManager.getImage('damage_numbers'),
@@ -152,17 +118,13 @@ export default class UnitSystem {
         0,
         constants.SPRITE_WIDTH,
         constants.SPRITE_HEIGHT,
-        0,
-        0,
+        unit.tile_x * constants.TILE_WIDTH,
+        unit.tile_y * constants.TILE_HEIGHT,
         constants.TILE_WIDTH,
         constants.TILE_HEIGHT
       );
 
-      context.restore();
-
     }
-
-    context.restore();
 
   }
 
